@@ -1,0 +1,22 @@
+﻿<Window x:Class="Bookstore_Management_System.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bookstore_Management_System"
+        mc:Ignorable="d"
+        Title="Вход в систему" Height="250" Width="300"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+            <TextBlock Text="Имя пользователя" Margin="5"/>
+            <TextBox x:Name="UsernameTextBox" Width="200" Margin="5" ToolTip="Имя пользователя"/>
+            <TextBlock Text="Пароль" Margin="5" />
+            <PasswordBox x:Name="PasswordBox" Width="200" Margin="5" ToolTip="Пароль" />
+            <Button Content="Войти" Width="100" Margin="5" Click="LoginButton_Click" FontSize="18"/>
+            <Button Content="Зарегестрироваться" Width="150" Margin="5" Click="Button_Click" />
+            <Button Content="Настройки подключения" Width="150" Margin="5" Click="SettingsButton_Click" />
+            <TextBlock x:Name="ErrorTextBlock" Foreground="Red" Margin="5" />
+        </StackPanel>
+    </Grid>
+</Window>

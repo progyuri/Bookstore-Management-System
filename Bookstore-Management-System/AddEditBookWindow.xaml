@@ -1,0 +1,75 @@
+﻿<Window x:Class="Bookstore_Management_System.AddEditBookWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bookstore_Management_System"
+        mc:Ignorable="d"
+        Title="Добавить/Редактировать книгу" Height="600" Width="600"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <!-- Колонка для обложки -->
+            <ColumnDefinition Width="200" />
+            <!-- Колонка для полей ввода -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Обложка книги -->
+        <StackPanel Grid.Column="0" VerticalAlignment="Top">
+            <TextBlock Text="Обложка книги:" Margin="0,0,0,10" />
+            <Image x:Name="CoverImage" Width="150" Height="200" Stretch="Uniform" Margin="0,0,0,10" />
+            <Button Content="Загрузить обложку" Width="150" Margin="0,0,0,10" Click="LoadCoverButton_Click" />
+        </StackPanel>
+
+        <!-- Поля для ввода данных -->
+        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+            <!-- Название книги -->
+            <TextBlock Text="Название книги:" />
+            <TextBox x:Name="TitleTextBox" Margin="0,5,0,10" />
+
+            <!-- Автор -->
+            <TextBlock Text="Автор:" />
+            <TextBox x:Name="AuthorTextBox" Margin="0,5,0,10" />
+
+            <!-- Жанр -->
+            <TextBlock Text="Жанр:" />
+            <ComboBox x:Name="GenreComboBox" Margin="0,5,0,10" DisplayMemberPath="Name" />
+
+            <!-- Издательство -->
+            <TextBlock Text="Издательство:" />
+            <TextBox x:Name="PublisherTextBox" Margin="0,5,0,10" />
+
+            <!-- Количество страниц -->
+            <TextBlock Text="Количество страниц:" />
+            <TextBox x:Name="PageCountTextBox" Margin="0,5,0,10" />
+
+            <!-- Год издания -->
+            <TextBlock Text="Год издания:" />
+            <TextBox x:Name="YearPublishedTextBox" Margin="0,5,0,10" />
+
+            <!-- Себестоимость -->
+            <TextBlock Text="Себестоимость:" />
+            <TextBox x:Name="CostPriceTextBox" Margin="0,5,0,10" />
+
+            <!-- Цена продажи -->
+            <TextBlock Text="Цена продажи:" />
+            <TextBox x:Name="SellingPriceTextBox" Margin="0,5,0,10" />
+
+            <!-- Является ли продолжением -->
+            <CheckBox x:Name="IsSequelCheckBox" Content="Является продолжением" Margin="0,5,0,10" />
+
+            <!-- Выбор книги, к которой это продолжение -->
+            <StackPanel x:Name="SequelPanel" Visibility="Collapsed">
+                <TextBlock Text="Продолжение книги:" />
+                <ComboBox x:Name="SequelToBookComboBox" Margin="0,5,0,10" DisplayMemberPath="Title" />
+            </StackPanel>
+
+            <!-- Кнопки -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Content="Сохранить" Width="100" Margin="5" Click="SaveButton_Click" />
+                <Button Content="Отмена" Width="100" Margin="5" Click="CancelButton_Click" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
