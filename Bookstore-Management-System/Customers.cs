@@ -17,6 +17,7 @@ namespace Bookstore_Management_System
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Customers()
         {
+            this.Orders = new HashSet<Orders>();
             this.ReservedBooks = new HashSet<ReservedBooks>();
             this.Sales = new HashSet<Sales>();
         }
@@ -28,7 +29,12 @@ namespace Bookstore_Management_System
         public string Address { get; set; }
         public string Tel { get; set; }
         public string Email { get; set; }
+        public Nullable<int> UserID { get; set; }
+        public string FullName { get; set; }
     
+        public virtual Users Users { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Orders> Orders { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ReservedBooks> ReservedBooks { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

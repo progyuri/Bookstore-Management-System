@@ -29,30 +29,11 @@ namespace Bookstore_Management_System
         {
             InitializeComponent();
             LoadSettings();
-            LoadRecentServersAndDatabases();
         }
 
         private void LoadSettings()
         {
-            // Загрузка последних введенных данных
-            _recentServers = Properties.Settings.Default.RecentServers.Cast<string>().ToList();
-            _recentDatabases = Properties.Settings.Default.RecentDatabases.Cast<string>().ToList();
-
-            // Установка текущих значений
-            ServerComboBox.ItemsSource = _recentServers;
-            DatabaseComboBox.ItemsSource = _recentDatabases;
-
-            ServerComboBox.Text = Properties.Settings.Default.Server;
-            DatabaseComboBox.Text = Properties.Settings.Default.Database;
-            WindowsAuthCheckBox.IsChecked = Properties.Settings.Default.UseWindowsAuth;
-
-            // Скрыть или показать поля для логина и пароля
-            SqlAuthPanel.Visibility = Properties.Settings.Default.UseWindowsAuth ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        private void LoadRecentServersAndDatabases()
-        {
-            // Загрузка последних серверов и баз данных из настроек
+            // Загрузка  всех вводимых значений
             if (Properties.Settings.Default.RecentServers != null)
             {
                 ServerComboBox.ItemsSource = Properties.Settings.Default.RecentServers.Cast<string>().ToList();
@@ -61,13 +42,27 @@ namespace Bookstore_Management_System
             {
                 DatabaseComboBox.ItemsSource = Properties.Settings.Default.RecentDatabases.Cast<string>().ToList();
             }
+
+            // Установка текущих значений
+            // Загрузка последних серверов и баз данных из настроек
+            
+            ServerComboBox.Text = Properties.Settings.Default.Server;
+            DatabaseComboBox.Text = Properties.Settings.Default.Database;
+            WindowsAuthCheckBox.IsChecked = Properties.Settings.Default.UseWindowsAuth;
+
+            // Скрыть или показать поля для логина и пароля
+            SqlAuthPanel.Visibility = Properties.Settings.Default.UseWindowsAuth ? Visibility.Collapsed : Visibility.Visible;
         }
+
+      
+        
 
         private void WindowsAuthCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             // Скрыть поля для логина и пароля при выборе Windows-аутентификации
             SqlAuthPanel.Visibility = Visibility.Collapsed;
         }
+        
 
         private void WindowsAuthCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -123,7 +118,7 @@ namespace Bookstore_Management_System
 
         private void UpdateConnectionString()
         {
-            // Формирование строки подключения для EF6
+            // Формирование строки подключения
             var builder = new SqlConnectionStringBuilder
             {
                 DataSource = Properties.Settings.Default.Server,
@@ -142,46 +137,54 @@ namespace Bookstore_Management_System
 
             string connectionString = builder.ToString();
 
-            // Обновление контекста
-            var contextType = typeof(BookStoreContext);
-            Database.SetInitializer<BookStoreContext>(null); // Отключаем инициализатор
-
-            var newContext = (BookStoreContext)Activator.CreateInstance(contextType);
-            newContext.Database.Connection.ConnectionString = connectionString;
-
-            using (newContext)
+            // Обновление строки подключения в текущем контексте
+            if (Application.Current.Properties["BookStoreContext"] is BookStoreContext currentContext)
             {
+                currentContext.Database.Connection.ConnectionString = connectionString;
+            }
+
+            // Сохранение строки подключения в настройках
+            Properties.Settings.Default.ConnectionString = connectionString;
+            Properties.Settings.Default.Save();
+        }
+
+        private async void CheckConnectionButton_Click(object sender, RoutedEventArgs e)
+        {
                 try
                 {
-                    // Проверка подключения для EF6
-                    if (!newContext.Database.Exists())
+                    var builder = new SqlConnectionStringBuilder
                     {
-                        throw new Exception("База данных не найдена");
+                        DataSource = ServerComboBox.Text,
+                        InitialCatalog = DatabaseComboBox.Text
+                    };
+
+                    if (WindowsAuthCheckBox.IsChecked ?? false)
+                    {
+                        builder.IntegratedSecurity = true;
+                    }
+                    else
+                    {
+                        builder.UserID = UsernameTextBox.Text;
+                        builder.Password = PasswordBox.Password;
+                    }
+
+                    string connectionString = builder.ToString();
+
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        await connection.OpenAsync(); // Асинхронное открытие соединения
+
+                        MessageBox.Show("Подключение к базе данных успешно установлено.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 catch (SqlException ex)
                 {
-                    MessageBox.Show(
-                        $"SQL Error: {ex.Message}",
-                        "Ошибка подключения",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    return;
+                    MessageBox.Show($"Ошибка подключения к базе данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        $"Ошибка: {ex.Message}",
-                        "Ошибка подключения",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    return;
+                    MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-
-            // Сохранение настроек
-            Properties.Settings.Default.ConnectionString = connectionString;
-            Properties.Settings.Default.Save();
         }
-    }
 }

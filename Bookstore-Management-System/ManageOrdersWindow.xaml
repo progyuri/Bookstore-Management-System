@@ -1,0 +1,104 @@
+﻿<Window x:Class="Bookstore_Management_System.ManageOrdersWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bookstore_Management_System"
+        mc:Ignorable="d"
+     Title="Управление заказами" Height="600" Width="800">
+    <Window.Resources>
+        <CollectionViewSource x:Key="ordersViewSource"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Панель фильтров -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <GroupBox Header="Фильтры" Padding="5">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Покупатель:"/>
+                        <ComboBox x:Name="CustomerComboBox" 
+                                DisplayMemberPath="FullName"
+                                Width="200"
+                                SelectionChanged="FilterChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Дата заказа:"/>
+                        <DatePicker x:Name="OrderDatePicker"
+                                  SelectedDateChanged="FilterChanged"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <CheckBox x:Name="ShowCompletedCheckBox" 
+                                Content="Показать завершенные"
+                                Margin="0,5,0,0"
+                                Checked="FilterChanged"
+                                Unchecked="FilterChanged"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <!-- Список заказов -->
+        <DataGrid x:Name="OrdersDataGrid" 
+                Grid.Row="1" 
+                AutoGenerateColumns="False"
+                RowDetailsVisibilityMode="VisibleWhenSelected"
+                ItemsSource="{Binding Source={StaticResource ordersViewSource}}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Номер" Binding="{Binding Id}" Width="60"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding OrderDate, StringFormat=d}" Width="120"/>
+                <DataGridTextColumn Header="Покупатель" Binding="{Binding Customers.FullName}" Width="200"/>
+                <DataGridTextColumn Header="Сумма" Binding="{Binding TotalAmount, StringFormat=C}" Width="100"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="120"/>
+                <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Завершить" 
+                                  Click="CompleteOrder_Click"
+                                  Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"
+                                  Margin="2"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Отменить"
+                            Click="CanselOrder_Click"
+                            Visibility="{Binding IsActive, Converter={StaticResource BoolToVisibility}}"
+                            Margin="2"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+
+            <!-- Детали заказа -->
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Border Margin="10" Padding="10" Background="#FFF0F0F0">
+                        <StackPanel>
+                            <TextBlock Text="Состав заказа:" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <DataGrid ItemsSource="{Binding OrderItems}" 
+                                    AutoGenerateColumns="False"
+                                    HeadersVisibility="Column">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Книга" Binding="{Binding Books.Title}" Width="*"/>
+                                    <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="100"/>
+                                    <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat=C}" Width="100"/>
+                                    <DataGridTextColumn Header="Сумма" Binding="{Binding Total, StringFormat=C}" Width="100"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+    </Grid>
+</Window>

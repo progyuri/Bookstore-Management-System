@@ -7,6 +7,36 @@
         mc:Ignorable="d"
         Title="Добавить/Редактировать книгу" Height="600" Width="600"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="StarButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent" Padding="2">
+                            <Path x:Name="starPath"
+                              Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"
+                              Fill="#FFD3D3D3"
+                              Stretch="Uniform"
+                              Width="30" 
+                              Height="30"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="starPath" Property="Fill" Value="#FFFFD700"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FilledStarStyle" TargetType="Path">
+            <Setter Property="Fill" Value="#FFFFD700"/>
+        </Style>
+        <SolidColorBrush x:Key="FilledStarBrush" Color="#FFFFD700"/>
+    </Window.Resources>
+
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <!-- Колонка для обложки -->
@@ -19,14 +49,14 @@
         <StackPanel Grid.Column="0" VerticalAlignment="Top">
             <TextBlock Text="Обложка книги:" Margin="0,0,0,10" />
             <Image x:Name="CoverImage" Width="150" Height="200" Stretch="Uniform" Margin="0,0,0,10" />
-            <Button Content="Загрузить обложку" Width="150" Margin="0,0,0,10" Click="LoadCoverButton_Click" />
+            <Button x:Name="LoadCoverButton" Content="Загрузить обложку" Width="150" Margin="0,0,0,10" Click="LoadCoverButton_Click" />
         </StackPanel>
 
         <!-- Поля для ввода данных -->
         <StackPanel Grid.Column="1" Margin="10,0,0,0">
             <!-- Название книги -->
             <TextBlock Text="Название книги:" />
-            <TextBox x:Name="TitleTextBox" Margin="0,5,0,10" />
+            <TextBox x:Name="TitleTextBox" Margin="0,5,0,10"/>
 
             <!-- Автор -->
             <TextBlock Text="Автор:" />
@@ -49,12 +79,8 @@
             <TextBox x:Name="YearPublishedTextBox" Margin="0,5,0,10" />
 
             <!-- Себестоимость -->
-            <TextBlock Text="Себестоимость:" />
+            <TextBlock Text="Стоимость:" />
             <TextBox x:Name="CostPriceTextBox" Margin="0,5,0,10" />
-
-            <!-- Цена продажи -->
-            <TextBlock Text="Цена продажи:" />
-            <TextBox x:Name="SellingPriceTextBox" Margin="0,5,0,10" />
 
             <!-- Является ли продолжением -->
             <CheckBox x:Name="IsSequelCheckBox" Content="Является продолжением" Margin="0,5,0,10" />
@@ -65,10 +91,31 @@
                 <ComboBox x:Name="SequelToBookComboBox" Margin="0,5,0,10" DisplayMemberPath="Title" />
             </StackPanel>
 
+            <!-- Выставление рейтинга -->
+            <StackPanel>
+                <TextBlock Text="Рейтинг:" Margin="0,10,0,5"/>
+                <ItemsControl x:Name="RatingItems" ItemsSource="{Binding StarCounts}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource StarButtonStyle}" 
+                        Tag="{Binding}"
+                        Click="StarButton_Click"
+                        MouseEnter="StarButton_MouseEnter"
+                        MouseLeave="StarButton_MouseLeave"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
             <!-- Кнопки -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                <Button Content="Сохранить" Width="100" Margin="5" Click="SaveButton_Click" />
-                <Button Content="Отмена" Width="100" Margin="5" Click="CancelButton_Click" />
+                <Button x:Name="SaveButton" Content="Сохранить" Width="100" Margin="5" Click="SaveButton_Click" />
+                <Button x:Name="CancelButton" Content="Отмена" Width="100" Margin="5" Click="CancelButton_Click" />
             </StackPanel>
         </StackPanel>
     </Grid>

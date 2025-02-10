@@ -14,9 +14,34 @@ namespace Bookstore_Management_System
     
     public partial class Users
     {
-        public int UserId { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Users()
+        {
+            this.BookRatings = new HashSet<BookRatings>();
+            this.BookViews = new HashSet<BookViews>();
+            this.Customers = new HashSet<Customers>();
+            this.Managers = new HashSet<Managers>();
+            this.UserActivityLog = new HashSet<UserActivityLog>();
+            this.UserPreferences = new HashSet<UserPreferences>();
+        }
+    
+        public int Id { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Role { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BookRatings> BookRatings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BookViews> BookViews { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Customers> Customers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Managers> Managers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserActivityLog> UserActivityLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserPreferences> UserPreferences { get; set; }
     }
 }

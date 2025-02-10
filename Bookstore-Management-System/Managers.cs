@@ -23,7 +23,9 @@ namespace Bookstore_Management_System
         public int Id { get; set; }
         public string ManagerName { get; set; }
         public string ManagerSurname { get; set; }
+        public Nullable<int> UserID { get; set; }
     
+        public virtual Users Users { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Sales> Sales { get; set; }
     }

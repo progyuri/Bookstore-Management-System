@@ -46,7 +46,7 @@ namespace Bookstore_Management_System
                     MessageBox.Show($"Добро пожаловать, {user.Username}!");
                     else MessageBox.Show($"Добро пожаловать уважаемый администратор!");
                     // Открытие главного окна
-                    var mainWindow = new MainWindow();
+                    var mainWindow = new MainWindow(user);
                     mainWindow.Show();
                     this.Close();
                 }

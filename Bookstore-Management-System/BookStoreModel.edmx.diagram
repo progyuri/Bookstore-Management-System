@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="716b1bfcf78a4161a01d17d3351e9983" Name="Diagram1">
+        <EntityTypeShape EntityType="Model.AuthorPopularity" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.BookRatings" Width="1.5" PointX="5.25" PointY="13" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Books" Width="1.5" PointX="3" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.BookViews" Width="1.5" PointX="5.25" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Customers" Width="1.5" PointX="6" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.GenrePopularity" Width="1.5" PointX="3" PointY="17.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Genres" Width="1.5" PointX="0.75" PointY="14.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Managers" Width="1.5" PointX="6" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.OrderItems" Width="1.5" PointX="8.25" PointY="13" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Orders" Width="1.5" PointX="6" PointY="26" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Promotions" Width="1.5" PointX="5.25" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.ReservedBooks" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Sales" Width="1.5" PointX="8.25" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.sysdiagrams" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UserActivityLog" Width="1.5" PointX="8.25" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UserPreferences" Width="1.5" PointX="6" PointY="19.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Users" Width="1.5" PointX="3.75" PointY="5.25" IsExpanded="true" />
+        <AssociationConnector Association="Model.FK__BookRatin__BookI__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__BookRatin__UserI__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Books__GenreId__398D8EEE" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__BookViews__BookI__66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__OrderItem__BookI__17F790F9" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__ReservedB__BookI__52593CB8" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Sales__BookId__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserActiv__BookI__70DDC3D8" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_SequelBook" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__BookViews__UserI__6754599E" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Customers__UserI__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Orders__Customer__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__ReservedB__Custo__534D60F1" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Sales__CustomerI__4F7CD00D" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__GenrePopu__Genre__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserPrefe__Genre__6C190EBB" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Managers__UserID__47DBAE45" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Sales__ManagerId__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__OrderItem__Order__17036CC0" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserActiv__UserI__6EF57B66" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserPrefe__UserI__6B24EA82" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.BookPromotions" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

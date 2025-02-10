@@ -33,6 +33,7 @@
 
             <!-- Кнопка сохранения -->
             <Button Content="Сохранить" Margin="0,10,0,0" Click="SaveButton_Click" />
+            <Button Content="Проверить подключение" Margin="0,10,0,0" Click="CheckConnectionButton_Click" />
         </StackPanel>
     </Grid>
 </Window>

@@ -18,6 +18,8 @@ namespace Bookstore_Management_System
         public Genres()
         {
             this.Books = new HashSet<Books>();
+            this.GenrePopularity = new HashSet<GenrePopularity>();
+            this.UserPreferences = new HashSet<UserPreferences>();
         }
     
         public int Id { get; set; }
@@ -25,5 +27,9 @@ namespace Bookstore_Management_System
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Books> Books { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GenrePopularity> GenrePopularity { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserPreferences> UserPreferences { get; set; }
     }
 }

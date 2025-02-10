@@ -1,16 +1,19 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -24,12 +27,18 @@ namespace Bookstore_Management_System
         private BookStoreContext _context;
         private Books _book;
         private byte[] _coverImageBytes;
+        private Users _loguser;
 
-        public AddEditBookWindow(Books book = null)
+        private int _hoverRating;
+        private int _selectedRating;
+        public List<int> StarCounts { get; } = new List<int> { 1, 2, 3, 4, 5 };
+
+        public AddEditBookWindow(Users loguser, Books book = null)
         {
             InitializeComponent();
             _context = new BookStoreContext();
             _book = book;
+            _loguser = loguser;
 
             // Загрузка жанров и книг для ComboBox
             GenreComboBox.ItemsSource = _context.Genres.ToList();
@@ -46,7 +55,6 @@ namespace Bookstore_Management_System
                 PageCountTextBox.Text = _book.PageCount.ToString();
                 YearPublishedTextBox.Text = _book.YearPublished.ToString();
                 CostPriceTextBox.Text = _book.CostPrice.ToString();
-                SellingPriceTextBox.Text = _book.SellingPrice.ToString();
                 IsSequelCheckBox.IsChecked = _book.IsSequel;
 
                 if (_book.IsSequel == true)
@@ -70,7 +78,109 @@ namespace Bookstore_Management_System
             // Обработка изменения состояния CheckBox
             IsSequelCheckBox.Checked += IsSequelCheckBox_Checked;
             IsSequelCheckBox.Unchecked += IsSequelCheckBox_Unchecked;
+
+
+            // Загружаем дополнительную информацию о рейтинге книги
+            RatingItems.DataContext = this;
+            if (_book != null)
+            {
+                var newrating = _context.BookRatings.Where(r => r.BookId == _book.Id && r.UserId == loguser.Id).FirstOrDefault();
+                if (newrating != null)
+                {
+                    _selectedRating = newrating.Rating;
+                    UpdateStarsVisual();
+                }
+                else
+                {
+                    _selectedRating = 0;
+                    UpdateStarsVisual();
+                }
+            }
+
+        
+            
+
+            // Настройка возможности редактирования элементов в зависимости от роли (для покупателя только просмотр)
+            bool isCustomer = loguser.Role == "Customer";
+
+            AuthorTextBox.IsReadOnly = isCustomer;
+            TitleTextBox.IsReadOnly = isCustomer;
+            GenreComboBox.IsReadOnly = isCustomer;
+            PublisherTextBox.IsReadOnly = isCustomer;
+            PageCountTextBox.IsReadOnly = isCustomer;
+            YearPublishedTextBox.IsReadOnly = isCustomer;
+            CostPriceTextBox.IsReadOnly = isCustomer;
+            IsSequelCheckBox.IsEnabled = !isCustomer;
+            SequelPanel.IsEnabled = !isCustomer;
+            SequelToBookComboBox.IsEnabled = !isCustomer;
+            LoadCoverButton.Visibility = !isCustomer ? Visibility.Visible : Visibility.Collapsed;
+            
         }
+
+
+        private void UpdateStarsVisual()
+        {
+            if (RatingItems.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+            {
+                // Если элементы ещё не созданы, отложим обновление
+                RatingItems.UpdateLayout();
+            }
+
+            for (int i = 0; i < RatingItems.Items.Count; i++)
+            {
+                var container = RatingItems.ItemContainerGenerator.ContainerFromIndex(i) as ContentPresenter;
+                if (container == null) continue;
+
+                var button = FindVisualChild<Button>(container);
+                if (button == null) continue;
+
+                var path = FindVisualChild<System.Windows.Shapes.Path>(button);
+                if (path == null) continue;
+
+                int starValue = (int)button.Tag;
+                path.Fill = starValue <= _selectedRating
+                    ? (SolidColorBrush)FindResource("FilledStarBrush")
+                    : Brushes.LightGray;
+            }
+        }
+
+        // Вспомогательный метод для поиска дочерних элементов
+        private static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+                if (child is T result)
+                    return result;
+
+                var childResult = FindVisualChild<T>(child);
+                if (childResult != null)
+                    return childResult;
+            }
+            return null;
+        }
+
+
+        private void StarButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var button = (Button)sender;
+            button.ToolTip = $"Оценка: {button.Tag} звезд";
+            _hoverRating = (int)((Button)sender).Tag;
+            UpdateStarsVisual();
+        }
+
+        private void StarButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _hoverRating = 0;
+            UpdateStarsVisual();
+        }
+
+        private void StarButton_Click(object sender, RoutedEventArgs e)
+        {
+            _selectedRating = (int)((Button)sender).Tag;
+            UpdateStarsVisual();
+        }
+
 
         private void IsSequelCheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -123,13 +233,12 @@ namespace Bookstore_Management_System
                     string.IsNullOrWhiteSpace(PublisherTextBox.Text) ||
                     !int.TryParse(PageCountTextBox.Text, out int pageCount) ||
                     !int.TryParse(YearPublishedTextBox.Text, out int yearPublished) ||
-                    !decimal.TryParse(CostPriceTextBox.Text, out decimal costPrice) ||
-                    !decimal.TryParse(SellingPriceTextBox.Text, out decimal sellingPrice))
+                    !decimal.TryParse(CostPriceTextBox.Text, out decimal costPrice))
                 {
                     MessageBox.Show("Пожалуйста, заполните все поля корректно.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                _book.Genres.Name = GenreComboBox.SelectedItem.ToString();
+
 
                 if (_book == null)
                 {
@@ -143,16 +252,29 @@ namespace Bookstore_Management_System
                         PageCount = int.Parse(PageCountTextBox.Text),
                         YearPublished = int.Parse(YearPublishedTextBox.Text),
                         CostPrice = decimal.Parse(CostPriceTextBox.Text),
-                        SellingPrice = decimal.Parse(SellingPriceTextBox.Text),
                         IsSequel = IsSequelCheckBox.IsChecked ?? false,
-                        SequelToBookId = IsSequelCheckBox.IsChecked == true ? ((Books)SequelToBookComboBox.SelectedItem).Id : (int?)null,
+                        SequelToBookId = IsSequelCheckBox.IsChecked == true ? ((Books)SequelToBookComboBox.SelectedItem)?.Id : null,
                         CoverImage = _coverImageBytes
                     };
                     _context.Books.Add(newBook);
+                    _context.SaveChanges(); // Сохраняем для получения ID
+
+                    // Добавление нового рейтинга для новой книги при выборе рейтинга
+                    if (_selectedRating > 0)
+                    {
+                        _context.BookRatings.Add(new BookRatings
+                        {
+                            BookId = newBook.Id,
+                            UserId = _loguser.Id,
+                            Rating = _selectedRating,
+                            RatingDate = DateTime.Now
+                        });
+                    }
                 }
                 else
                 {
                     // Редактирование существующей книги
+                    
                     _book.Title = TitleTextBox.Text;
                     _book.Author = AuthorTextBox.Text;
                     _book.GenreId = ((Genres)GenreComboBox.SelectedItem).Id;
@@ -160,14 +282,50 @@ namespace Bookstore_Management_System
                     _book.PageCount = int.Parse(PageCountTextBox.Text);
                     _book.YearPublished = int.Parse(YearPublishedTextBox.Text);
                     _book.CostPrice = decimal.Parse(CostPriceTextBox.Text);
-                    _book.SellingPrice = decimal.Parse(SellingPriceTextBox.Text);
                     _book.IsSequel = IsSequelCheckBox.IsChecked ?? false;
                     _book.SequelToBookId = IsSequelCheckBox.IsChecked == true ? ((Books)SequelToBookComboBox.SelectedItem).Id : (int?)null;
                     _book.CoverImage = _coverImageBytes;
+                    
+                    _context.SaveChanges();
+
+
+
+                    // Обновляем рейтинг книги (если рейтинга еще не было добавляем его)
+                    var existingRating = _context.BookRatings
+                            .FirstOrDefault(r =>
+                                r.BookId == _book.Id &&
+                                r.UserId == _loguser.Id);
+                    if (_selectedRating > 0)
+                    {
+                        if (existingRating == null)
+                        {
+                            _context.BookRatings.Add(new BookRatings
+                            {
+                                BookId = _book.Id,
+                                UserId = _loguser.Id,
+                                Rating = _selectedRating,
+                                RatingDate = DateTime.Now
+                            });
+                        }
+                        else
+                        {
+                            existingRating.Rating = _selectedRating;
+                            existingRating.RatingDate = DateTime.Now;
+                        }
+                    }
+
+                    //если убрали рейтинг, а он существовал
+                    else if (existingRating != null)
+                    {
+                        _context.BookRatings.Remove(existingRating);
+                    }
                 }
+
+
 
                 _context.SaveChanges();
                 DialogResult = true;
+
             }
             catch (Exception ex)
             {
